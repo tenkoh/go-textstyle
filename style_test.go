@@ -2,7 +2,7 @@ package style_test
 
 // ToDo
 // []byteを受け取って文字単位で処理をする => utf8.DecodeRune([]byte) (rune, int)するだけ。テスト不要。
-// a-zA-Z0-9のRegularの時だけ変換処理をする
+// ok a-zA-Z0-9のRegularの時だけ変換処理をする
 // ok  uint8の特定の範囲の時にTrueを返す関数 -> internalに実装
 // ok  上を使ってRegular書体の小文字、大文字、数字に合致するかを判定する関数 -> internalに実装
 // 変換処理は複数パターン持たせる

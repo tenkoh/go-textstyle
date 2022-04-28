@@ -13,6 +13,19 @@ const (
 	REGULAR_DIGIT_MAX = 57
 )
 
+type Transformer struct {
+	rep              *replacer
+	stockToTransform []byte
+	stockToWrite     []byte
+}
+
+func (tr *Transformer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err error) {
+	return
+}
+
+func (tr *Transformer) Reset() {
+}
+
 type replacer struct {
 	lowerFunc func(uint8) []byte
 	upperFunc func(uint8) []byte
