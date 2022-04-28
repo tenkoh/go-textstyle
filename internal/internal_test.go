@@ -105,6 +105,7 @@ func TestReplacer_Replace(t *testing.T) {
 		want []byte
 	}{
 		{args{r1, []byte("aA1あ")}, []byte("bC4あ")},
+		{args{r1, []byte{250, 100, 70, 50, 250}}, []byte{250, 101, 72, 53, 250}},
 	}
 	for _, tt := range tests {
 		if got := tt.arg.r.replace(tt.arg.src); !reflect.DeepEqual(tt.want, got) {
