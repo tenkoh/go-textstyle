@@ -1,6 +1,9 @@
 package internal
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestInRange(t *testing.T) {
 	tests := []struct {
@@ -83,6 +86,29 @@ func TestIsRegularDigit(t *testing.T) {
 	for _, tt := range tests {
 		if got := isRegularDigit(tt.src); got != tt.want {
 			t.Errorf("input: %s, got %v, want %v\n", string(tt.src), got, tt.want)
+		}
+	}
+}
+
+func TestReplacer_Replace(t *testing.T) {
+	type args struct {
+		r   *replacer
+		src []byte
+	}
+	r1 := &replacer{
+		lowerFunc: func(b uint8) []byte { return []byte{b + 1} },
+		upperFunc: func(b uint8) []byte { return []byte{b + 2} },
+		digitFunc: func(b uint8) []byte { return []byte{b + 3} },
+	}
+	tests := []struct {
+		arg  args
+		want []byte
+	}{
+		{args{r1, []byte("aA1あ")}, []byte("bC4あ")},
+	}
+	for _, tt := range tests {
+		if got := tt.arg.r.replace(tt.arg.src); !reflect.DeepEqual(tt.want, got) {
+			t.Errorf("want %v, got %v\n", tt.want, got)
 		}
 	}
 }
