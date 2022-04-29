@@ -30,6 +30,8 @@ func NewTransformer(r Replacer) *Transformer {
 	return &Transformer{r, nil}
 }
 
+// Transform conducts transforming following its Replacer.
+// Other specifications follow transform.Transformer.
 func (tr *Transformer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err error) {
 	nSrc = len(src)
 
@@ -58,6 +60,7 @@ func (tr *Transformer) Reset() {
 	tr.stockToWrite = nil
 }
 
+// Replacer defines replacing method for a-z, A-Z and 0-9.
 type Replacer interface {
 	LowerFunc(uint8) []byte
 	UpperFunc(uint8) []byte
@@ -67,9 +70,9 @@ type Replacer interface {
 // SimpleReplacer is an implementation of Replacer
 // which just offsets a-z, A-Z and 0-9.
 type SimpleReplacer struct {
-	lowerOffet  uint32
-	upperOffset uint32
-	digitOffset uint32
+	LowerOffet  uint32
+	UpperOffset uint32
+	DigitOffset uint32
 }
 
 func NewSimpleReplacer(lo, uo, do uint32) *SimpleReplacer {
@@ -77,15 +80,15 @@ func NewSimpleReplacer(lo, uo, do uint32) *SimpleReplacer {
 }
 
 func (sr *SimpleReplacer) LowerFunc(src uint8) []byte {
-	u, _ := offsetChar(src, sr.lowerOffet)
+	u, _ := offsetChar(src, sr.LowerOffet)
 	return uint32ToBytes(u)
 }
 func (sr *SimpleReplacer) UpperFunc(src uint8) []byte {
-	u, _ := offsetChar(src, sr.upperOffset)
+	u, _ := offsetChar(src, sr.UpperOffset)
 	return uint32ToBytes(u)
 }
 func (sr *SimpleReplacer) DigitFunc(src uint8) []byte {
-	u, _ := offsetChar(src, sr.digitOffset)
+	u, _ := offsetChar(src, sr.DigitOffset)
 	return uint32ToBytes(u)
 }
 
