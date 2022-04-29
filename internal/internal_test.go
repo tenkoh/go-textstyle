@@ -5,6 +5,19 @@ import (
 	"testing"
 )
 
+type testReplacer struct {
+}
+
+func (rep *testReplacer) LowerFunc(b uint8) []byte {
+	return []byte{b + 1}
+}
+func (rep *testReplacer) UpperFunc(b uint8) []byte {
+	return []byte{b + 2}
+}
+func (rep *testReplacer) DigitFunc(b uint8) []byte {
+	return []byte{b + 3}
+}
+
 func TestInRange(t *testing.T) {
 	tests := []struct {
 		src  uint8
@@ -92,14 +105,10 @@ func TestIsRegularDigit(t *testing.T) {
 
 func TestReplacer_Replace(t *testing.T) {
 	type args struct {
-		r   *replacer
+		r   Replacer
 		src []byte
 	}
-	r1 := &replacer{
-		lowerFunc: func(b uint8) []byte { return []byte{b + 1} },
-		upperFunc: func(b uint8) []byte { return []byte{b + 2} },
-		digitFunc: func(b uint8) []byte { return []byte{b + 3} },
-	}
+	r1 := &testReplacer{}
 	tests := []struct {
 		arg  args
 		want []byte
@@ -108,7 +117,7 @@ func TestReplacer_Replace(t *testing.T) {
 		{args{r1, []byte{250, 100, 70, 50, 250}}, []byte{250, 101, 72, 53, 250}},
 	}
 	for _, tt := range tests {
-		if got := tt.arg.r.replace(tt.arg.src); !reflect.DeepEqual(tt.want, got) {
+		if got := replace(tt.arg.r, tt.arg.src); !reflect.DeepEqual(tt.want, got) {
 			t.Errorf("want %v, got %v\n", tt.want, got)
 		}
 	}
@@ -128,11 +137,7 @@ func TestTransformer_Transform(t *testing.T) {
 		stockToWrite     []byte
 		err              error
 	}
-	r1 := &replacer{
-		lowerFunc: func(b uint8) []byte { return []byte{b + 1} },
-		upperFunc: func(b uint8) []byte { return []byte{b + 2} },
-		digitFunc: func(b uint8) []byte { return []byte{b + 3} },
-	}
+	r1 := &testReplacer{}
 	tr1 := &Transformer{
 		rep:              r1,
 		stockToWrite:     nil,

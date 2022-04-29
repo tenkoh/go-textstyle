@@ -14,7 +14,7 @@ const (
 )
 
 type Transformer struct {
-	rep              *replacer
+	rep              Replacer
 	stockToTransform []byte
 	stockToWrite     []byte
 }
@@ -26,15 +26,15 @@ func (tr *Transformer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, e
 func (tr *Transformer) Reset() {
 }
 
-type replacer struct {
-	lowerFunc func(uint8) []byte
-	upperFunc func(uint8) []byte
-	digitFunc func(uint8) []byte
+type Replacer interface {
+	LowerFunc(uint8) []byte
+	UpperFunc(uint8) []byte
+	DigitFunc(uint8) []byte
 }
 
-// rep.replace replaces a-zA-Z0-9 with regular style into specific styles.
+// replace replaces a-zA-Z0-9 with regular style into specific styles.
 // Invalid bytes, which could not be decoded into rune, are passed through.
-func (rep *replacer) replace(p []byte) []byte {
+func replace(rep Replacer, p []byte) []byte {
 	var replaced []byte
 
 	for len(p) > 0 {
@@ -43,7 +43,7 @@ func (rep *replacer) replace(p []byte) []byte {
 		if r == utf8.RuneError {
 			replaced = append(replaced, p[:n]...)
 		} else {
-			replaced = append(replaced, rep.doReplace(p[:n])...)
+			replaced = append(replaced, replaceByRune(rep, p[:n])...)
 		}
 
 		p = p[n:]
@@ -51,19 +51,19 @@ func (rep *replacer) replace(p []byte) []byte {
 	return replaced
 }
 
-// rep.doReplace focuses on a valid []byte which could be decoded into rune.
+// replaceByRune focuses on a valid []byte which could be decoded into a rune.
 // Regular style a-zA-Z0-9 are replaced by specific functions.
-func (rep *replacer) doReplace(src []byte) []byte {
-	if isRegularLower(src) {
-		return rep.lowerFunc(src[0])
+func replaceByRune(rep Replacer, p []byte) []byte {
+	if isRegularLower(p) {
+		return rep.LowerFunc(p[0])
 	}
-	if isRegularUpper(src) {
-		return rep.upperFunc(src[0])
+	if isRegularUpper(p) {
+		return rep.UpperFunc(p[0])
 	}
-	if isRegularDigit(src) {
-		return rep.digitFunc(src[0])
+	if isRegularDigit(p) {
+		return rep.DigitFunc(p[0])
 	}
-	return src
+	return p
 }
 
 func inRange(src, min, max uint8) bool {
