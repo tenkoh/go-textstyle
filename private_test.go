@@ -1,4 +1,4 @@
-package internal
+package style
 
 import (
 	"reflect"
@@ -6,19 +6,6 @@ import (
 
 	"golang.org/x/text/transform"
 )
-
-type testReplacer struct {
-}
-
-func (rep *testReplacer) LowerFunc(b uint8) []byte {
-	return []byte{b + 1}
-}
-func (rep *testReplacer) UpperFunc(b uint8) []byte {
-	return []byte{b + 2}
-}
-func (rep *testReplacer) DigitFunc(b uint8) []byte {
-	return []byte{b + 3}
-}
 
 func TestInRange(t *testing.T) {
 	tests := []struct {
@@ -105,6 +92,19 @@ func TestIsRegularDigit(t *testing.T) {
 	}
 }
 
+type testReplacer struct {
+}
+
+func (rep *testReplacer) LowerFunc(b uint8) []byte {
+	return []byte{b + 1}
+}
+func (rep *testReplacer) UpperFunc(b uint8) []byte {
+	return []byte{b + 2}
+}
+func (rep *testReplacer) DigitFunc(b uint8) []byte {
+	return []byte{b + 3}
+}
+
 func TestReplacer_Replace(t *testing.T) {
 	type args struct {
 		r   Replacer
@@ -119,7 +119,7 @@ func TestReplacer_Replace(t *testing.T) {
 		{args{r1, []byte{250, 100, 70, 50, 250}}, []byte{250, 101, 72, 53, 250}},
 	}
 	for _, tt := range tests {
-		if got := replace(tt.arg.r, tt.arg.src); !reflect.DeepEqual(tt.want, got) {
+		if got := Replace(tt.arg.r, tt.arg.src); !reflect.DeepEqual(tt.want, got) {
 			t.Errorf("want %v, got %v\n", tt.want, got)
 		}
 	}
@@ -139,10 +139,7 @@ func TestTransformer_Transform(t *testing.T) {
 		err          error
 	}
 	r1 := &testReplacer{}
-	tr1 := &Transformer{
-		rep:          r1,
-		stockToWrite: nil,
-	}
+	tr1 := NewTransformer(r1)
 	tests := []struct {
 		tr    *Transformer
 		args  []args
