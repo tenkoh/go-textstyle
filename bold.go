@@ -1,16 +1,15 @@
 package style
 
-var Bold = NewTransformer(&bold{})
+const (
+	BOLD_LOWER = 0xf09d9039
+	BOLD_UPPER = 0xf09d903f
+	BOLD_DIGIT = 0xf09d9f5e
+)
 
-type bold struct {
-}
-
-func (b *bold) LowerFunc(src uint8) []byte {
-	return nil
-}
-func (b *bold) UpperFunc(src uint8) []byte {
-	return nil
-}
-func (b *bold) DigitFunc(src uint8) []byte {
-	return nil
-}
+var Bold = NewTransformer(
+	NewSimpleReplacer(
+		BOLD_LOWER,
+		BOLD_UPPER,
+		BOLD_DIGIT,
+	),
+)

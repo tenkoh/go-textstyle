@@ -2,12 +2,20 @@ package style_test
 
 import (
 	"io"
+	"os"
 	"strings"
 	"testing"
 
 	style "github.com/tenkoh/go-transform-style"
 	"golang.org/x/text/transform"
 )
+
+func ExampleTransformer() {
+	s := "Hello, Gophers"
+	r := transform.NewReader(strings.NewReader(s), style.Bold)
+	io.Copy(os.Stdout, r)
+	// Output: 𝐇𝐞𝐥𝐥𝐨, 𝐆𝐨𝐩𝐡𝐞𝐫𝐬
+}
 
 func TestBold(t *testing.T) {
 	src := "My new gear..."

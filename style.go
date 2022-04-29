@@ -1,6 +1,9 @@
 package style
 
 import (
+	"encoding/binary"
+	"errors"
+	"fmt"
 	"unicode/utf8"
 
 	"golang.org/x/text/transform"
@@ -19,7 +22,7 @@ const (
 // This aims to replace characters which is composed of one byte,
 // so multi bytes characters or invalid bytes are passed through.
 type Transformer struct {
-	rep          Replacer
+	Rep          Replacer
 	stockToWrite []byte
 }
 
@@ -31,7 +34,7 @@ func (tr *Transformer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, e
 	nSrc = len(src)
 
 	// joined the remained bytes which were not written into dst in the previous loop.
-	replaced := Replace(tr.rep, src)
+	replaced := Replace(tr.Rep, src)
 	if tr.stockToWrite != nil {
 		replaced = append(replaced, tr.stockToWrite...)
 		tr.stockToWrite = nil
@@ -59,6 +62,31 @@ type Replacer interface {
 	LowerFunc(uint8) []byte
 	UpperFunc(uint8) []byte
 	DigitFunc(uint8) []byte
+}
+
+// SimpleReplacer is an implementation of Replacer
+// which just offsets a-z, A-Z and 0-9.
+type SimpleReplacer struct {
+	lowerOffet  uint32
+	upperOffset uint32
+	digitOffset uint32
+}
+
+func NewSimpleReplacer(lo, uo, do uint32) *SimpleReplacer {
+	return &SimpleReplacer{lo, uo, do}
+}
+
+func (sr *SimpleReplacer) LowerFunc(src uint8) []byte {
+	u, _ := offsetChar(src, sr.lowerOffet)
+	return uint32ToBytes(u)
+}
+func (sr *SimpleReplacer) UpperFunc(src uint8) []byte {
+	u, _ := offsetChar(src, sr.upperOffset)
+	return uint32ToBytes(u)
+}
+func (sr *SimpleReplacer) DigitFunc(src uint8) []byte {
+	u, _ := offsetChar(src, sr.digitOffset)
+	return uint32ToBytes(u)
 }
 
 // replace replaces a-zA-Z0-9 with regular style into specific styles.
@@ -118,4 +146,29 @@ func isRegularDigit(src []byte) bool {
 		return false
 	}
 	return inRange(src[0], REGULAR_DIGIT_MIN, REGULAR_DIGIT_MAX)
+}
+
+func offsetChar(src uint8, offset uint32) (uint32, error) {
+	v := uint64(src) + uint64(offset)
+	if v > 0xffffffff {
+		err := fmt.Sprintf("overflow in transformation, add %d to %d is over 0xff", src, offset)
+		return 0, errors.New(err)
+	}
+
+	return uint32(v), nil
+}
+
+func uint32ToBytes(i uint32) []byte {
+	b := make([]byte, 4)
+	binary.BigEndian.PutUint32(b, i)
+	// remove empty bytes from head
+	var n int
+	for j := 0; j < 4; j++ {
+		if b[j] == 0 {
+			n++
+		} else {
+			break
+		}
+	}
+	return b[n:]
 }
