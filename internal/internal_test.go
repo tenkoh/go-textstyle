@@ -3,6 +3,8 @@ package internal
 import (
 	"reflect"
 	"testing"
+
+	"golang.org/x/text/transform"
 )
 
 type testReplacer struct {
@@ -130,18 +132,16 @@ func TestTransformer_Transform(t *testing.T) {
 		atEOF bool
 	}
 	type wants struct {
-		wrote            []byte
-		nSrc             int
-		nDst             int
-		stockToTransform []byte
-		stockToWrite     []byte
-		err              error
+		wrote        []byte
+		nSrc         int
+		nDst         int
+		stockToWrite []byte
+		err          error
 	}
 	r1 := &testReplacer{}
 	tr1 := &Transformer{
-		rep:              r1,
-		stockToWrite:     nil,
-		stockToTransform: nil,
+		rep:          r1,
+		stockToWrite: nil,
 	}
 	tests := []struct {
 		tr    *Transformer
@@ -151,7 +151,23 @@ func TestTransformer_Transform(t *testing.T) {
 		{
 			tr1,
 			[]args{{[]byte("aA1あ"), make([]byte, 10), false}},
-			[]wants{{fillBytes([]byte("bC4あ"), 10), 6, 6, nil, nil, nil}},
+			[]wants{{fillBytes([]byte("bC4あ"), 10), 6, 6, nil, nil}},
+		},
+		{
+			tr1,
+			[]args{{[]byte("aA1あ"), make([]byte, 5), false}},
+			[]wants{{[]byte{98, 67, 52, 227, 129}, 6, 5, []byte{130}, transform.ErrShortDst}},
+		},
+		{
+			tr1,
+			[]args{
+				{[]byte("aA1あ"), make([]byte, 5), false},
+				{[]byte(""), make([]byte, 5), false},
+			},
+			[]wants{
+				{[]byte{98, 67, 52, 227, 129}, 6, 5, []byte{130}, transform.ErrShortDst},
+				{fillBytes([]byte{130}, 5), 0, 1, nil, nil},
+			},
 		},
 	}
 
@@ -173,9 +189,6 @@ func TestTransformer_Transform(t *testing.T) {
 			}
 			if err != want.err {
 				t.Errorf("error mismatched; want %s, got %s\n", want.err, err)
-			}
-			if got := tt.tr.stockToTransform; !reflect.DeepEqual(got, want.stockToTransform) {
-				t.Errorf("stockToTransform mismatched; want %v, got %v\n", got, want.stockToTransform)
 			}
 			if got := tt.tr.stockToWrite; !reflect.DeepEqual(got, want.stockToWrite) {
 				t.Errorf("stockToWrite mismatched; want %v, got %v\n", got, want.stockToWrite)

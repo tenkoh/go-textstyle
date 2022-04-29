@@ -2,6 +2,8 @@ package internal
 
 import (
 	"unicode/utf8"
+
+	"golang.org/x/text/transform"
 )
 
 const (
@@ -13,17 +15,40 @@ const (
 	REGULAR_DIGIT_MAX = 57
 )
 
+// Transformer is a implement of transform.Transformer.
+// This aims to replace characters which is composed of one byte,
+// so multi bytes characters or invalid bytes are passed through.
 type Transformer struct {
-	rep              Replacer
-	stockToTransform []byte
-	stockToWrite     []byte
+	rep          Replacer
+	stockToWrite []byte
 }
 
 func (tr *Transformer) Transform(dst, src []byte, atEOF bool) (nDst, nSrc int, err error) {
+	nSrc = len(src)
+
+	// joined the remained bytes which were not written into dst in the previous loop.
+	replaced := replace(tr.rep, src)
+	if tr.stockToWrite != nil {
+		replaced = append(replaced, tr.stockToWrite...)
+		tr.stockToWrite = nil
+	}
+
+	if len(dst) >= len(replaced) {
+		copy(dst, replaced)
+		nDst = len(replaced)
+		err = nil
+		return
+	}
+
+	tr.stockToWrite = replaced[len(dst):]
+	copy(dst, replaced[:len(dst)])
+	nDst = len(dst)
+	err = transform.ErrShortDst
 	return
 }
 
 func (tr *Transformer) Reset() {
+	tr.stockToWrite = nil
 }
 
 type Replacer interface {
