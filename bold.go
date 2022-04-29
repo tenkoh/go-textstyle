@@ -1,4 +1,4 @@
-package style
+package textstyle
 
 const (
 	BOLD_LOWER = 0xf09d9039

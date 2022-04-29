@@ -1,4 +1,4 @@
-module github.com/tenkoh/go-transform-style
+module github.com/tenkoh/go-textstyle
 
 go 1.18
 

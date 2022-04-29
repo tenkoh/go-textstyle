@@ -1,4 +1,4 @@
-package style_test
+package textstyle_test
 
 import (
 	"io"
@@ -6,13 +6,13 @@ import (
 	"strings"
 	"testing"
 
-	style "github.com/tenkoh/go-transform-style"
+	"github.com/tenkoh/go-textstyle"
 	"golang.org/x/text/transform"
 )
 
 func ExampleTransformer() {
 	s := "Hello, Gophers"
-	r := transform.NewReader(strings.NewReader(s), style.Bold)
+	r := transform.NewReader(strings.NewReader(s), textstyle.Bold)
 	io.Copy(os.Stdout, r)
 	// Output: 𝐇𝐞𝐥𝐥𝐨, 𝐆𝐨𝐩𝐡𝐞𝐫𝐬
 }
@@ -21,7 +21,7 @@ func TestBold(t *testing.T) {
 	src := "My new gear..."
 	want := "𝐌𝐲 𝐧𝐞𝐰 𝐠𝐞𝐚𝐫..."
 
-	reader := transform.NewReader(strings.NewReader(src), style.Bold)
+	reader := transform.NewReader(strings.NewReader(src), textstyle.Bold)
 	b, err := io.ReadAll(reader)
 	if err != nil {
 		t.Errorf("got error: %s\n", err)
