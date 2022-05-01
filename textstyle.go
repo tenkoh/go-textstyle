@@ -1,22 +1,12 @@
 package textstyle
 
 import (
-	"encoding/binary"
-	"errors"
-	"fmt"
 	"unicode/utf8"
 
 	"golang.org/x/text/transform"
 )
 
-const (
-	REGULAR_LOWER_MIN = 97
-	REGULAR_LOWER_MAX = 122
-	REGULAR_UPPER_MIN = 65
-	REGULAR_UPPER_MAX = 90
-	REGULAR_DIGIT_MIN = 48
-	REGULAR_DIGIT_MAX = 57
-)
+var altMap = map[rune]rune{}
 
 // Transformer is a implement of transform.Transformer.
 // This aims to replace characters which is composed of one byte,
@@ -62,34 +52,45 @@ func (tr *Transformer) Reset() {
 
 // Replacer defines replacing method for a-z, A-Z and 0-9.
 type Replacer interface {
-	LowerFunc(uint8) []byte
-	UpperFunc(uint8) []byte
-	DigitFunc(uint8) []byte
+	LowerFunc(rune) rune
+	UpperFunc(rune) rune
+	DigitFunc(rune) rune
 }
 
 // SimpleReplacer is an implementation of Replacer
 // which just offsets a-z, A-Z and 0-9.
 type SimpleReplacer struct {
-	LowerOffet  uint32
-	UpperOffset uint32
-	DigitOffset uint32
+	LowerOffset rune
+	UpperOffset rune
+	DigitOffset rune
 }
 
-func NewSimpleReplacer(lo, uo, do uint32) *SimpleReplacer {
+func NewSimpleReplacer(lo, uo, do rune) *SimpleReplacer {
 	return &SimpleReplacer{lo, uo, do}
 }
 
-func (sr *SimpleReplacer) LowerFunc(src uint8) []byte {
-	u, _ := offsetChar(src, sr.LowerOffet)
-	return uint32ToBytes(u)
+func simpleReplace(src rune, offset rune) rune {
+	replaced := src + offset
+	// check whethere special replace is required
+	alt, exist := altMap[replaced]
+	if exist {
+		replaced = alt
+	}
+	// check a minimal valid condition
+	if !utf8.ValidRune(replaced) {
+		return src
+	}
+	return replaced
 }
-func (sr *SimpleReplacer) UpperFunc(src uint8) []byte {
-	u, _ := offsetChar(src, sr.UpperOffset)
-	return uint32ToBytes(u)
+
+func (sr *SimpleReplacer) LowerFunc(src rune) rune {
+	return simpleReplace(src, sr.LowerOffset)
 }
-func (sr *SimpleReplacer) DigitFunc(src uint8) []byte {
-	u, _ := offsetChar(src, sr.DigitOffset)
-	return uint32ToBytes(u)
+func (sr *SimpleReplacer) UpperFunc(src rune) rune {
+	return simpleReplace(src, sr.UpperOffset)
+}
+func (sr *SimpleReplacer) DigitFunc(src rune) rune {
+	return simpleReplace(src, sr.DigitOffset)
 }
 
 // replace replaces a-zA-Z0-9 with regular style into specific styles.
@@ -103,7 +104,8 @@ func Replace(rep Replacer, p []byte) []byte {
 		if r == utf8.RuneError {
 			replaced = append(replaced, p[:n]...)
 		} else {
-			replaced = append(replaced, replaceByRune(rep, p[:n])...)
+			rr := replaceByRune(rep, r)
+			replaced = append(replaced, []byte(string(rr))...)
 		}
 
 		p = p[n:]
@@ -113,65 +115,15 @@ func Replace(rep Replacer, p []byte) []byte {
 
 // replaceByRune focuses on a valid []byte which could be decoded into a rune.
 // Regular style a-zA-Z0-9 are replaced by specific functions.
-func replaceByRune(rep Replacer, p []byte) []byte {
-	if isRegularLower(p) {
-		return rep.LowerFunc(p[0])
+func replaceByRune(rep Replacer, r rune) rune {
+	if 'a' <= r && r <= 'z' {
+		return rep.LowerFunc(r)
 	}
-	if isRegularUpper(p) {
-		return rep.UpperFunc(p[0])
+	if 'A' <= r && r <= 'Z' {
+		return rep.UpperFunc(r)
 	}
-	if isRegularDigit(p) {
-		return rep.DigitFunc(p[0])
+	if '0' <= r && r <= '9' {
+		return rep.DigitFunc(r)
 	}
-	return p
-}
-
-func inRange(src, min, max uint8) bool {
-	return src >= min && src <= max
-}
-
-func isRegularLower(src []byte) bool {
-	if len(src) != 1 {
-		return false
-	}
-	return inRange(src[0], REGULAR_LOWER_MIN, REGULAR_LOWER_MAX)
-}
-
-func isRegularUpper(src []byte) bool {
-	if len(src) != 1 {
-		return false
-	}
-	return inRange(src[0], REGULAR_UPPER_MIN, REGULAR_UPPER_MAX)
-}
-
-func isRegularDigit(src []byte) bool {
-	if len(src) != 1 {
-		return false
-	}
-	return inRange(src[0], REGULAR_DIGIT_MIN, REGULAR_DIGIT_MAX)
-}
-
-func offsetChar(src uint8, offset uint32) (uint32, error) {
-	v := uint64(src) + uint64(offset)
-	if v > 0xffffffff {
-		err := fmt.Sprintf("overflow in transformation, add %d to %d is over 0xff", src, offset)
-		return 0, errors.New(err)
-	}
-
-	return uint32(v), nil
-}
-
-func uint32ToBytes(i uint32) []byte {
-	b := make([]byte, 4)
-	binary.BigEndian.PutUint32(b, i)
-	// remove empty bytes from head
-	var n int
-	for j := 0; j < 4; j++ {
-		if b[j] == 0 {
-			n++
-		} else {
-			break
-		}
-	}
-	return b[n:]
+	return r
 }

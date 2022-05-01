@@ -2,26 +2,30 @@
 package textstyle
 
 const (
-	BOLD_LOWER_OFFSET   = 0xf09d9039
-	BOLD_UPPER_OFFSET   = 0xf09d903f
-	BOLD_DIGIT_OFFSET   = 0xf09d9f5e
-	ITALIC_LOWER_OFFSET = 0xf09d912d
-	ITALIC_UPPER_OFFSET = 0xf09d9073
-	ITALIC_DIGIT_OFFSET = 0x0
+	BOLD_LOWER_OFFSET   = 119737
+	BOLD_UPPER_OFFSET   = 119743
+	BOLD_DIGIT_OFFSET   = 120734
+	ITALIC_LOWER_OFFSET = 119789
+	ITALIC_UPPER_OFFSET = 119795
+	ITALIC_DIGIT_OFFSET = 0
 )
 
-var Bold = NewTransformer(
-	NewSimpleReplacer(
-		BOLD_LOWER_OFFSET,
-		BOLD_UPPER_OFFSET,
-		BOLD_DIGIT_OFFSET,
-	),
-)
+func Bold() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			BOLD_LOWER_OFFSET,
+			BOLD_UPPER_OFFSET,
+			BOLD_DIGIT_OFFSET,
+		),
+	)
+}
 
-var Italic = NewTransformer(
-	NewSimpleReplacer(
-		ITALIC_LOWER_OFFSET,
-		ITALIC_UPPER_OFFSET,
-		ITALIC_DIGIT_OFFSET,
-	),
-)
+func Italic() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			ITALIC_LOWER_OFFSET,
+			ITALIC_UPPER_OFFSET,
+			ITALIC_DIGIT_OFFSET,
+		),
+	)
+}
