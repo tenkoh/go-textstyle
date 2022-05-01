@@ -1,6 +1,6 @@
-package textstyle
+//go:generate go run generate_style.go
 
-//go:generate go run tool/generate_style.go
+package textstyle
 
 import (
 	"unicode/utf8"
@@ -8,7 +8,35 @@ import (
 	"golang.org/x/text/transform"
 )
 
-var altMap = map[rune]rune{}
+// altMap is a table of alternative characters of ones
+// which are lacked in the sequence of unicode codepoints.
+// refering to asahi-net.or.jp. (mathematical symbols)
+var altMap = map[rune]rune{
+	0x1d455: 0x210e, //italic h
+	0x1d49d: 0x212c, //script B
+	0x1d4a0: 0x2130, //script E
+	0x1d4a1: 0x2131, //script F
+	0x1d4a3: 0x210b, //script H
+	0x1d4a4: 0x2110, //script I
+	0x1d4a7: 0x2112, //script L
+	0x1d4a8: 0x2133, //script M
+	0x1d4ad: 0x211b, //script R
+	0x1d4ba: 0x212f, //script e
+	0x1d4bc: 0x210a, //script g
+	0x1d4c4: 0x2134, //script o
+	0x1d506: 0x212d, //fraktur C
+	0x1d50b: 0x210c, //fraktur H
+	0x1d50c: 0x2111, //fraktur I
+	0x1d515: 0x211c, //fraktur R
+	0x1d51d: 0x2128, //fraktur Z
+	0x1d53a: 0x2102, //double struck symbol C
+	0x1d53f: 0x210d, //double struck symbol H
+	0x1d545: 0x2115, //double struck symbol N
+	0x1d547: 0x2119, //double struck symbol P
+	0x1d548: 0x211a, //double struck symbol Q
+	0x1d549: 0x211d, //double struck symbol R
+	0x1d551: 0x2124, //double struck symbol Z
+}
 
 // Transformer is a implement of transform.Transformer.
 // This aims to replace characters which is composed of one byte,
