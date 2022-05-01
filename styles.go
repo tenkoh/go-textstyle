@@ -2,15 +2,48 @@
 package textstyle
 
 const (
-	BOLD_LOWER_OFFSET       = 119737
-	BOLD_UPPER_OFFSET       = 119743
-	BOLD_DIGIT_OFFSET       = 120734
-	ITALIC_LOWER_OFFSET     = 119789
-	ITALIC_UPPER_OFFSET     = 119795
-	ITALIC_DIGIT_OFFSET     = 0
-	SANS_SERIF_LOWER_OFFSET = 120153
-	SANS_SERIF_UPPER_OFFSET = 120159
-	SANS_SERIF_DIGIT_OFFSET = 120754
+	BOLD_LOWER_OFFSET                   = 119737
+	BOLD_UPPER_OFFSET                   = 119743
+	BOLD_DIGIT_OFFSET                   = 120734
+	ITALIC_LOWER_OFFSET                 = 119789
+	ITALIC_UPPER_OFFSET                 = 119795
+	ITALIC_DIGIT_OFFSET                 = 0
+	SANS_SERIF_LOWER_OFFSET             = 120153
+	SANS_SERIF_UPPER_OFFSET             = 120159
+	SANS_SERIF_DIGIT_OFFSET             = 120754
+	BOLD_ITALIC_LOWER_OFFSET            = 119841
+	BOLD_ITALIC_UPPER_OFFSET            = 119847
+	BOLD_ITALIC_DIGIT_OFFSET            = 120734
+	SCRIPT_LOWER_OFFSET                 = 119893
+	SCRIPT_UPPER_OFFSET                 = 119899
+	SCRIPT_DIGIT_OFFSET                 = 0
+	BOLD_SCRIPT_LOWER_OFFSET            = 119945
+	BOLD_SCRIPT_UPPER_OFFSET            = 119951
+	BOLD_SCRIPT_DIGIT_OFFSET            = 120734
+	FRAKTUR_LOWER_OFFSET                = 119997
+	FRAKTUR_UPPER_OFFSET                = 120003
+	FRAKTUR_DIGIT_OFFSET                = 0
+	BOLD_FRAKTUR_LOWER_OFFSET           = 120101
+	BOLD_FRAKTUR_UPPER_OFFSET           = 120107
+	BOLD_FRAKTUR_DIGIT_OFFSET           = 120734
+	DOUBLE_STRUCK_LOWER_OFFSET          = 120049
+	DOUBLE_STRUCK_UPPER_OFFSET          = 120055
+	DOUBLE_STRUCK_DIGIT_OFFSET          = 120744
+	SANS_SERIF_LOWER_OFFSET             = 120153
+	SANS_SERIF_UPPER_OFFSET             = 120159
+	SANS_SERIF_DIGIT_OFFSET             = 120754
+	SANS_SERIF_BOLD_LOWER_OFFSET        = 120205
+	SANS_SERIF_BOLD_UPPER_OFFSET        = 120211
+	SANS_SERIF_BOLD_DIGIT_OFFSET        = 120764
+	SANS_SERIF_ITALIC_LOWER_OFFSET      = 120257
+	SANS_SERIF_ITALIC_UPPER_OFFSET      = 120263
+	SANS_SERIF_ITALIC_DIGIT_OFFSET      = 120754
+	SANS_SERIF_BOLD_ITALIC_LOWER_OFFSET = 120309
+	SANS_SERIF_BOLD_ITALIC_UPPER_OFFSET = 120315
+	SANS_SERIF_BOLD_ITALIC_DIGIT_OFFSET = 120764
+	MONOSPACE_LOWER_OFFSET              = 120361
+	MONOSPACE_UPPER_OFFSET              = 120367
+	MONOSPACE_DIGIT_OFFSET              = 120764
 )
 
 func Bold() *Transformer {
@@ -42,6 +75,127 @@ func SansSerif() *Transformer {
 			SANS_SERIF_LOWER_OFFSET,
 			SANS_SERIF_UPPER_OFFSET,
 			SANS_SERIF_DIGIT_OFFSET,
+		),
+	)
+}
+
+func BoldItalic() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"BoldItalic",
+			BOLD_ITALIC_LOWER_OFFSET,
+			BOLD_ITALIC_UPPER_OFFSET,
+			BOLD_ITALIC_DIGIT_OFFSET,
+		),
+	)
+}
+
+func Script() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"Script",
+			SCRIPT_LOWER_OFFSET,
+			SCRIPT_UPPER_OFFSET,
+			SCRIPT_DIGIT_OFFSET,
+		),
+	)
+}
+
+func BoldScript() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"BoldScript",
+			BOLD_SCRIPT_LOWER_OFFSET,
+			BOLD_SCRIPT_UPPER_OFFSET,
+			BOLD_SCRIPT_DIGIT_OFFSET,
+		),
+	)
+}
+
+func Fraktur() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"Fraktur",
+			FRAKTUR_LOWER_OFFSET,
+			FRAKTUR_UPPER_OFFSET,
+			FRAKTUR_DIGIT_OFFSET,
+		),
+	)
+}
+
+func BoldFraktur() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"BoldFraktur",
+			BOLD_FRAKTUR_LOWER_OFFSET,
+			BOLD_FRAKTUR_UPPER_OFFSET,
+			BOLD_FRAKTUR_DIGIT_OFFSET,
+		),
+	)
+}
+
+func DoubleStruck() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"DoubleStruck",
+			DOUBLE_STRUCK_LOWER_OFFSET,
+			DOUBLE_STRUCK_UPPER_OFFSET,
+			DOUBLE_STRUCK_DIGIT_OFFSET,
+		),
+	)
+}
+
+func SansSerif() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"SansSerif",
+			SANS_SERIF_LOWER_OFFSET,
+			SANS_SERIF_UPPER_OFFSET,
+			SANS_SERIF_DIGIT_OFFSET,
+		),
+	)
+}
+
+func SansSerifBold() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"SansSerifBold",
+			SANS_SERIF_BOLD_LOWER_OFFSET,
+			SANS_SERIF_BOLD_UPPER_OFFSET,
+			SANS_SERIF_BOLD_DIGIT_OFFSET,
+		),
+	)
+}
+
+func SansSerifItalic() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"SansSerifItalic",
+			SANS_SERIF_ITALIC_LOWER_OFFSET,
+			SANS_SERIF_ITALIC_UPPER_OFFSET,
+			SANS_SERIF_ITALIC_DIGIT_OFFSET,
+		),
+	)
+}
+
+func SansSerifBoldItalic() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"SansSerifBoldItalic",
+			SANS_SERIF_BOLD_ITALIC_LOWER_OFFSET,
+			SANS_SERIF_BOLD_ITALIC_UPPER_OFFSET,
+			SANS_SERIF_BOLD_ITALIC_DIGIT_OFFSET,
+		),
+	)
+}
+
+func Monospace() *Transformer {
+	return NewTransformer(
+		NewSimpleReplacer(
+			"Monospace",
+			MONOSPACE_LOWER_OFFSET,
+			MONOSPACE_UPPER_OFFSET,
+			MONOSPACE_DIGIT_OFFSET,
 		),
 	)
 }

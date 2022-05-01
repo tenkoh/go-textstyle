@@ -50,6 +50,17 @@ var Styles = []Style{
 	NewStyle("bold", "𝐚𝐀𝟎"),
 	NewStyle("italic", "𝑎𝐴0"),
 	NewStyle("sans serif", "𝖺𝖠𝟢"),
+	NewStyle("bold italic", "𝒂𝑨𝟎"),
+	NewStyle("script", "𝒶𝒜0"),
+	NewStyle("bold script", "𝓪𝓐𝟎"),
+	NewStyle("fraktur", "𝔞𝔄0"),
+	NewStyle("bold fraktur", "𝖆𝕬𝟎"),
+	NewStyle("double struck", "𝕒𝔸𝟘"),
+	NewStyle("sans serif", "𝖺𝖠𝟢"),
+	NewStyle("sans serif bold", "𝗮𝗔𝟬"),
+	NewStyle("sans serif italic", "𝘢𝘈𝟢"),
+	NewStyle("sans serif bold italic", "𝙖𝘼𝟬"),
+	NewStyle("monospace", "𝚊𝙰𝟬"),
 }
 
 // replacePattern must be aA0 with a specific text style.
