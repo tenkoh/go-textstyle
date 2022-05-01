@@ -90,13 +90,14 @@ type Replacer interface {
 // SimpleReplacer is an implementation of Replacer
 // which just offsets a-z, A-Z and 0-9.
 type SimpleReplacer struct {
+	Name        string
 	LowerOffset rune
 	UpperOffset rune
 	DigitOffset rune
 }
 
-func NewSimpleReplacer(lo, uo, do rune) *SimpleReplacer {
-	return &SimpleReplacer{lo, uo, do}
+func NewSimpleReplacer(name string, lo, uo, do rune) *SimpleReplacer {
+	return &SimpleReplacer{name, lo, uo, do}
 }
 
 func simpleReplace(src rune, offset rune) rune {

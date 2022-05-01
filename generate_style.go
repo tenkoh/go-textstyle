@@ -25,6 +25,7 @@ const ({{range .}}
 func {{.TitleLabel}}() *Transformer{
     return NewTransformer(
         NewSimpleReplacer(
+            "{{.TitleLabel}}",
             {{.Label}}_LOWER_OFFSET,
             {{.Label}}_UPPER_OFFSET,
             {{.Label}}_DIGIT_OFFSET,
