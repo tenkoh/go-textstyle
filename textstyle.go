@@ -1,5 +1,7 @@
 package textstyle
 
+//go:generate go run tool/generate_style.go
+
 import (
 	"unicode/utf8"
 

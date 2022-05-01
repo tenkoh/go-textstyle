@@ -1,3 +1,7 @@
+//go:build ignore
+
+// This program generate ../styles.go by invoking go generate
+
 package main
 
 import (
