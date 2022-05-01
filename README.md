@@ -23,9 +23,9 @@ import (
 
 func main() {
 	s := "Hello, Gophers"
-  r := transform.NewReader(strings.NewReader(s), textstyle.Bold())
+	r := transform.NewReader(strings.NewReader(s), textstyle.Bold())
 	io.Copy(os.Stdout, r)
-  //Output: 𝐇𝐞𝐥𝐥𝐨, 𝐆𝐨𝐩𝐡𝐞𝐫𝐬
+	//Output: 𝐇𝐞𝐥𝐥𝐨, 𝐆𝐨𝐩𝐡𝐞𝐫𝐬
 }
 ```
 
