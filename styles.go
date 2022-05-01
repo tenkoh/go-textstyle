@@ -8,9 +8,6 @@ const (
 	ITALIC_LOWER_OFFSET                 = 119789
 	ITALIC_UPPER_OFFSET                 = 119795
 	ITALIC_DIGIT_OFFSET                 = 0
-	SANS_SERIF_LOWER_OFFSET             = 120153
-	SANS_SERIF_UPPER_OFFSET             = 120159
-	SANS_SERIF_DIGIT_OFFSET             = 120754
 	BOLD_ITALIC_LOWER_OFFSET            = 119841
 	BOLD_ITALIC_UPPER_OFFSET            = 119847
 	BOLD_ITALIC_DIGIT_OFFSET            = 120734
@@ -43,7 +40,7 @@ const (
 	SANS_SERIF_BOLD_ITALIC_DIGIT_OFFSET = 120764
 	MONOSPACE_LOWER_OFFSET              = 120361
 	MONOSPACE_UPPER_OFFSET              = 120367
-	MONOSPACE_DIGIT_OFFSET              = 120764
+	MONOSPACE_DIGIT_OFFSET              = 120774
 )
 
 func Bold() *Transformer {
@@ -64,17 +61,6 @@ func Italic() *Transformer {
 			ITALIC_LOWER_OFFSET,
 			ITALIC_UPPER_OFFSET,
 			ITALIC_DIGIT_OFFSET,
-		),
-	)
-}
-
-func SansSerif() *Transformer {
-	return NewTransformer(
-		NewSimpleReplacer(
-			"SansSerif",
-			SANS_SERIF_LOWER_OFFSET,
-			SANS_SERIF_UPPER_OFFSET,
-			SANS_SERIF_DIGIT_OFFSET,
 		),
 	)
 }
